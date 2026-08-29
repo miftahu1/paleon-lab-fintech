@@ -1,0 +1,42 @@
+# Systemd service for dummy TCP listener on port 5432
+# This provides a reachable TCP port 5432 from the Internet WITHOUT running PostgreSQL.
+# Intentionally exposed for scanner testing — NO real database service behind it.
+# Scanner will see: "Port 5432 open" / "PostgreSQL port reachable"
+# Expected classification: observed (port reachable, no service confirmed)
+
+[Unit]
+Description=Dummy TCP Listener on Port 5432 (PostgreSQL port) for Paleon Scanner Testing
+Documentation=man:socat(1)
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+# socat listens on TCP 5432, accepts connections, and immediately closes them
+# No PostgreSQL protocol is spoken - just a raw TCP accept/close
+# This is safe: no authentication, no data access, no command execution
+ExecStart=/usr/bin/socat TCP-LISTEN:5432,reuseaddr,fork EXEC:/bin/true
+Restart=always
+RestartSec=5
+# Run as unprivileged user
+User=nobody
+Group=nogroup
+# Security hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictAddressFamilies=AF_INET AF_INET6
+RestrictNamespaces=true
+LockPersonality=true
+MemoryDenyWriteExecute=true
+# Limit resources
+LimitNOFILE=1024
+LimitNPROC=64
+LimitCORE=0
+
+[Install]
+WantedBy=multi-user.target

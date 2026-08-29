@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Developer Portal — Tessera Financial (Legacy)</title>
+  <meta name="description" content="Legacy developer portal for Tessera Financial. This is an older staging environment with intentionally exposed outdated component indicators for scanner testing.">
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body class="dev-mode">
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="/" class="brand" aria-label="Tessera Financial home">
+        <span class="brand-mark" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 26 26" fill="none"><rect x="0.5" y="0.5" width="25" height="25" rx="5" stroke="#1f4d3c" stroke-width="1"/><path d="M7 13L11.5 17.5L19 9" stroke="#1f4d3c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span><span class="brand-name">Tessera<b> Financial</b></span><span class="brand-sub">Developer Portal (Legacy)</span></span>
+      </a>
+      <nav class="main-nav" id="primaryNav" aria-label="Primary">
+        <ul>
+          <li><a href="/">Main Site</a></li>
+          <li><a href="https://api.paleon-lab-fintech.co.uk">API Reference</a></li>
+          <li><a href="https://app.paleon-lab-fintech.co.uk">Console</a></li>
+        </ul>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="primaryNav"><span></span></button>
+    </div>
+  </header>
+
+  <main class="dev-shell">
+    <div class="container">
+      <section class="dev-banner" aria-labelledby="dev-notice">
+        <p class="old-note" id="dev-notice"><strong>⚠ Legacy environment</strong> — This is an older staging/development deployment retained for historical reference. It intentionally runs an outdated web server version observable in response headers for scanner detection testing. <strong>Do not use for production integrations.</strong></p>
+      </section>
+
+      <section class="dev-block">
+        <p class="eyebrow"><span class="num">01</span> API Access (Legacy v1)</p>
+        <h2>Sandbox credentials</h2>
+        <p class="muted">The legacy sandbox uses API keys instead of the current bearer token flow. Keys are prefixed <code>ts_live_</code> (despite the name, these are sandbox-only).</p>
+        <pre>curl -H "X-API-Key: ts_live_abc123def456" \
+    https://dev.paleon-lab-fintech.co.uk/v1/payments</pre>
+        <div class="panel" style="margin-top:var(--s-3); padding:var(--s-3);">
+          <h4>Deprecated endpoints still served</h4>
+          <ul class="muted" style="columns:2; column-gap:var(--s-4);">
+            <li><code>GET /v1/transactions</code> → use <code>/v1/payments</code></li>
+            <li><code>POST /v1/transfers</code> → use <code>/v1/payouts</code></li>
+            <li><code>GET /v1/balance</code> → use <code>/v1/ledger/trial-balance</code></li>
+            <li><code>GET /v1/merchant</code> → use <code>/v1/merchants/me</code></li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="dev-block">
+        <p class="eyebrow"><span class="num">02</span> Webhook testing (Legacy)</p>
+        <h2>HMAC-SHA1 (deprecated)</h2>
+        <p class="muted">Legacy webhooks use SHA1 signatures. Current API uses HMAC-SHA256 via <code>Tessera-Signature</code> header. This endpoint remains for backwards compatibility only.</p>
+        <pre># Legacy verification (DO NOT USE FOR NEW INTEGRATIONS)
+echo -n "${payload}${timestamp}" | openssl dgst -sha1 -hmac "${secret}"</pre>
+      </section>
+
+      <section class="dev-block">
+        <p class="eyebrow"><span class="num">03</span> SDKs & Libraries</p>
+        <h2>Archived client libraries</h2>
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:var(--s-2);">
+          <div class="panel" style="padding:var(--s-3);">
+            <code>tessera-python</code> <span class="version-badge">1.2.0</span>
+            <p class="muted note-fine mt-1">Last updated: 2022-03-15</p>
+            <p class="muted note-fine">Requires Python 3.6+ (EOL 2021-12-23)</p>
+          </div>
+          <div class="panel" style="padding:var(--s-3);">
+            <code>tessera-node</code> <span class="version-badge">0.9.4</span>
+            <p class="muted note-fine mt-1">Last updated: 2021-11-08</p>
+            <p class="muted note-fine">Requires Node 14 (EOL 2023-04-30)</p>
+          </div>
+          <div class="panel" style="padding:var(--s-3);">
+            <code>tessera-php</code> <span class="version-badge">1.0.1</span>
+            <p class="muted note-fine mt-1">Last updated: 2022-01-20</p>
+            <p class="muted note-fine">Requires PHP 7.4 (EOL 2022-11-28)</p>
+          </div>
+          <div class="panel" style="padding:var(--s-3);">
+            <code>tessera-ruby</code> <span class="version-badge">0.5.0</span>
+            <p class="muted note-fine mt-1">Last updated: 2021-09-12</p>
+            <p class="muted note-fine">Requires Ruby 2.7 (EOL 2023-03-31)</p>
+          </div>
+        </div>
+        <p class="muted note-fine" style="margin-top:var(--s-2);">Current SDKs are available at <a href="https://api.paleon-lab-fintech.co.uk">api.paleon-lab-fintech.co.uk</a></p>
+      </section>
+
+      <section class="dev-block">
+        <p class="eyebrow"><span class="num">04</span> Changelog (excerpt)</p>
+        <h2>Selected legacy releases</h2>
+        <div class="panel" style="padding:var(--s-3);">
+          <table class="table-wrap">
+            <thead>
+              <tr><th>Version</th><th>Date</th><th>Notes</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>v1.8.0</code></td><td>2022-06-10</td><td>Added idempotency keys; deprecated <code>/v1/transactions</code></td></tr>
+              <tr><td><code>v1.7.2</code></td><td>2022-02-14</td><td>Last release with SHA1 webhook signatures</td></tr>
+              <tr><td><code>v1.6.0</code></td><td>2021-10-05</td><td>Introduced payout batching</td></tr>
+              <tr><td><code>v1.5.1</code></td><td>2021-05-20</td><td>Final release supporting PHP 7.4</td></tr>
+              <tr><td><code>v1.4.0</code></td><td>2020-12-01</td><td>Initial ledger API (beta)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="dev-block">
+        <p class="eyebrow"><span class="num">05</span> Infrastructure notes</p>
+        <h2>Observability</h2>
+        <p class="muted">This legacy environment runs on an older stack. External scanners may observe the following characteristics which are <strong>intentionally exposed for testing</strong>:</p>
+        <ul class="muted">
+          <li>HTTP response header <code>Server: nginx/1.14.0</code> (EOL 2019-10-01)</li>
+          <li>TLS 1.0/1.1 may be negotiated (intentionally not disabled on this host)</li>
+          <li>No HSTS header on this subdomain</li>
+          <li>Legacy cipher suites may be offered</li>
+        </ul>
+        <p class="muted note-fine"><strong>Note:</strong> These are configuration-level indicators of outdated components. They do not imply confirmed exploitability. The expected scanner classification is <em>detected/inferred outdated component</em>, not confirmed CVE exploitation.</p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="f-top">
+        <div>
+          <a href="/" class="brand" aria-label="Tessera Financial home">
+            <span class="brand-mark" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 26 26" fill="none"><rect x="0.5" y="0.5" width="25" height="25" rx="5" stroke="#f6f3ec" stroke-width="1"/><path d="M7 13L11.5 17.5L19 9" stroke="#f6f3ec" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span><span class="brand-name">Tessera<b> Financial</b></span><span class="brand-sub">Payments Infrastructure</span></span>
+          </a>
+          <p class="f-blurb">Fictional UK payments and settlement infrastructure. Legacy developer portal — all data shown is synthetic.</p>
+        </div>
+        <div><h4>Current</h4><ul><li><a href="https://api.paleon-lab-fintech.co.uk">API Reference</a></li><li><a href="https://app.paleon-lab-fintech.co.uk">Console</a></li><li><a href="/contact">Support</a></li></ul></div>
+        <div><h4>Legal</h4><ul><li><a href="/resources#terms">Terms</a></li><li><a href="/resources#privacy">Privacy</a></li></ul></div>
+      </div>
+      <div class="f-bottom"><span>© <span id="year">2026</span> Tessera Financial Ltd (fictional). A Paleon test environment.</span></div>
+    </div>
+  </footer>
+  <script src="/js/main.js"></script>
+</body>
+</html>

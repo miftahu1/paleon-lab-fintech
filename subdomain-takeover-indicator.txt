@@ -1,0 +1,76 @@
+# Subdomain Takeover Safe Indicator
+# This file documents the INTENTIONAL, SAFE indicator for scanner testing.
+# It is NOT an actually claimable takeover target.
+
+## Indicator: Dangling CNAME to non-existent target
+
+The following DNS record is INTENTIONALLY configured to demonstrate a subdomain-takeover
+INDICATOR pattern without creating a real vulnerability:
+
+```
+staging.paleon-lab-fintech.co.uk.  IN  CNAME  staging.paleon-lab-fintech.co.uk.s3-website-eu-west-1.amazonaws.com.
+```
+
+### Why this is SAFE (not an actual takeover risk):
+
+1. **Target domain does not exist** - `staging.paleon-lab-fintech.co.uk.s3-website-eu-west-1.amazonaws.com`
+   is a fabricated S3 website endpoint that does not exist in AWS. No one can claim it.
+
+2. **Controlled namespace** - The `paleon-lab-fintech.co.uk` domain is owned by Paleon for testing.
+   No external party can register subdomains under it.
+
+3. **No real service** - There is no actual S3 bucket, no CloudFront distribution, no third-party
+   service behind this CNAME. It points to a synthetically constructed hostname.
+
+4. **Scanner detection only** - External scanners that check for dangling CNAMEs will flag this
+   as a "potential subdomain takeover" finding. This is the INTENDED test condition.
+
+5. **Documented in expected.yaml** - The expected finding is classified as:
+   - Type: subdomain-takeover-indicator
+   - Severity: observed (not critical/high)
+   - Status: must_be_reported
+   - Notes: "Safe indicator — target hostname does not exist and cannot be claimed"
+
+## Alternative indicator (also safe):
+
+A second indicator using a different pattern:
+
+```
+dev-old.paleon-lab-fintech.co.uk.  IN  CNAME  paleon-lab-old-env.herokudns.com.
+```
+
+Same safety properties: `paleon-lab-old-env.herokudns.com` is a fabricated Heroku DNS target
+that does not exist and cannot be claimed by anyone.
+
+---
+
+## Expected scanner behavior
+
+Scanners should detect these as:
+- "Dangling CNAME detected"
+- "Potential subdomain takeover"
+- "Unclaimed third-party service reference"
+
+Expected classification in Paleon test framework: **observed** (indicator present, not exploitable)
+
+---
+
+## Verification
+
+To verify these are safe indicators:
+
+```bash
+# Check CNAME exists
+dig staging.paleon-lab-fintech.co.uk CNAME +short
+# Returns: staging.paleon-lab-fintech.co.uk.s3-website-eu-west-1.amazonaws.com.
+
+# Check target resolves (it should NOT)
+dig staging.paleon-lab-fintech.co.uk.s3-website-eu-west-1.amazonaws.com +short
+# Returns: (empty/NXDOMAIN) — target does not exist
+
+# Check no one can claim it
+# The target hostname contains the source domain, so it's not a claimable
+# third-party namespace. AWS S3 website endpoints follow pattern:
+# <bucket-name>.s3-website-<region>.amazonaws.com
+# This target has "paleon-lab-fintech.co.uk" embedded, making it invalid.
+```

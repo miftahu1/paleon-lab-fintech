@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Services — Tessera Financial</title>
+  <meta name="description" content="Tessera Financial services: payment acceptance, payouts, ledger & reconciliation, and developer platform. Fictional UK fintech for Paleon scanner test lab.">
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="/" class="brand" aria-label="Tessera Financial home">
+        <span class="brand-mark" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 26 26" fill="none"><rect x="0.5" y="0.5" width="25" height="25" rx="5" stroke="#1f4d3c" stroke-width="1"/><path d="M7 13L11.5 17.5L19 9" stroke="#1f4d3c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span><span class="brand-name">Tessera<b> Financial</b></span><span class="brand-sub">Payments Infrastructure</span></span>
+      </a>
+      <nav class="main-nav" id="primaryNav" aria-label="Primary">
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/services" class="active">Services</a></li>
+          <li><a href="/solutions">Solutions</a></li>
+          <li><a href="/resources">Resources</a></li>
+          <li><a href="/about">About</a></li>
+          <li><a href="/contact" class="nav-cta">Contact</a></li>
+        </ul>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="primaryNav"><span></span></button>
+    </div>
+  </header>
+
+  <main>
+    <section class="page-intro">
+      <div class="container">
+        <p class="breadcrumb"><a href="/">Home</a> / Services</p>
+        <p class="eyebrow"><span class="num">01</span> Product lines</p>
+        <h1>Four services. One ledger.</h1>
+        <p class="lede">Each capability can be used alone. Together they form a complete payments and settlement stack.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="grid-2">
+          <div class="card">
+            <svg class="c-ico" viewBox="0 0 24 24" fill="none"><rect x="4" y="5" width="16" height="14" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M8 10h8M8 14h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M4 9h16" stroke="currentColor" stroke-width="1.6"/></svg>
+            <h3>Acceptance</h3>
+            <p>Card, bank transfer and open-banking payment initiation through one integration. Tokenised order references mean you settle against a contract, not a correlation ID.</p>
+            <ul class="tag-list">
+              <li class="tag-pill">Hosted checkout</li>
+              <li class="tag-pill">Server-to-server</li>
+              <li class="tag-pill">3-D Secure 2</li>
+              <li class="tag-pill">Webhooks</li>
+            </ul>
+            <a href="#pricing" class="c-link">See pricing <span aria-hidden="true">→</span></a>
+          </div>
+          <div class="card">
+            <svg class="c-ico" viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h16M4 17h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="18" cy="17" r="2.5" stroke="currentColor" stroke-width="1.6"/></svg>
+            <h3>Payouts</h3>
+            <p>Supplier invoices, refunds and marketplace splits settled on a schedule you control. Every payout carries its own reconcilable trace.</p>
+            <ul class="tag-list">
+              <li class="tag-pill">Bulk CSV/API</li>
+              <li class="tag-pill">Approval rules</li>
+              <li class="tag-pill">Named-account check</li>
+              <li class="tag-pill">Same-day FPS</li>
+            </ul>
+            <a href="#pricing" class="c-link">See pricing <span aria-hidden="true">→</span></a>
+          </div>
+          <div class="card">
+            <svg class="c-ico" viewBox="0 0 24 24" fill="none"><rect x="4" y="3" width="16" height="18" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M8 8h8M8 12h8M8 16h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            <h3>Ledger & Reconciliation</h3>
+            <p>Double-entry by default. Immutable, attributable entries with real-time trial balance. The month-end becomes a report, not an investigation.</p>
+            <ul class="tag-list">
+              <li class="tag-pill">Immutable audit trail</li>
+              <li class="tag-pill">Trial balance API</li>
+              <li class="tag-pill">Xero/QuickBooks export</li>
+              <li class="tag-pill">Posting rules engine</li>
+            </ul>
+            <a href="/resources" class="c-link">Read the docs <span aria-hidden="true">→</span></a>
+          </div>
+          <div class="card">
+            <svg class="c-ico" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" stroke-width="1.6"/><path d="M9 9h6M12 15h.01" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M9 12h6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            <h3>Developer Platform</h3>
+            <p>RESTful APIs, idempotent webhooks, sandbox with deterministic test data, and an OpenAPI spec you can drop into your codegen.</p>
+            <ul class="tag-list">
+              <li class="tag-pill">OpenAPI 3.1</li>
+              <li class="tag-pill">Idempotency keys</li>
+              <li class="tag-pill">Sandbox + mock data</li>
+              <li class="tag-pill">Rate limits published</li>
+            </ul>
+            <a href="https://api.paleon-lab-fintech.co.uk/swagger.json" class="c-link">Open spec <span aria-hidden="true">→</span></a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" style="background:var(--paper-raised);border-top:1px solid var(--line);border-bottom:1px solid var(--line);" id="pricing">
+      <div class="container">
+        <div class="sec-head">
+          <p class="eyebrow"><span class="num">02</span> Pricing</p>
+          <h2>One rate. No hidden spreads.</h2>
+          <p class="lede">We charge a transparent per-transaction fee. No interchange mark-ups, no monthly minimums, no setup costs. The table below shows the (fictional) headline rates for this test environment.</p>
+        </div>
+        <div class="table-wrap">
+          <table class="data" aria-label="Fictional pricing for test environment">
+            <thead>
+              <tr>
+                <th>Service</th>
+                <th>Rate</th>
+                <th>Settlement</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Card (UK)</td><td class="num">1.3% + 20p</td><td>T+1</td><td>Includes 3-D Secure</td></tr>
+              <tr><td>Card (EEA)</td><td class="num">1.6% + 20p</td><td>T+1</td><td>Includes 3-D Secure</td></tr>
+              <tr><td>Open Banking (UK)</td><td class="num">0.4% (cap £3)</td><td>Instant</td><td>No card rails</td></tr>
+              <tr><td>Faster Payments payout</td><td class="num">25p</td><td>Seconds</td><td>GBP only</td></tr>
+              <tr><td>BACS payout</td><td class="num">15p</td><td>T+3</td><td>Batch window 10:00</td></tr>
+              <tr><td>International payout</td><td class="num">£3.50 + mid-market</td><td>T+1</td><td>Via partner corridor</td></tr>
+              <tr><td>Ledger seats</td><td class="num">£0</td><td>—</td><td>Unlimited users</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="note-fine mt-3 center">All rates are illustrative test data. No real transactions are processed.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="sec-head">
+          <p class="eyebrow"><span class="num">03</span> Coverage</p>
+          <h2>Where the rails reach.</h2>
+        </div>
+        <div class="grid-4">
+          <div class="panel center">
+            <div class="tnum" style="font-family:var(--serif);font-size:2.8rem;color:var(--accent);">7</div>
+            <div>UK schemes</div>
+          </div>
+          <div class="panel center">
+            <div class="tnum" style="font-family:var(--serif);font-size:2.8rem;color:var(--accent);">31</div>
+            <div>EEA corridors</div>
+          </div>
+          <div class="panel center">
+            <div class="tnum" style="font-family:var(--serif);font-size:2.8rem;color:var(--accent);">3</div>
+            <div>Settlement CCY</div>
+          </div>
+          <div class="panel center">
+            <div class="tnum" style="font-family:var(--serif);font-size:2.8rem;color:var(--accent);">99.87%</div>
+            <div>Success rate</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-tight">
+      <div class="container center">
+        <h2>Ready to try the sandbox?</h2>
+        <p class="lede muted" style="margin-bottom:var(--s-4);">No sales call. No card. Just a deterministic test environment.</p>
+        <div class="hero-actions">
+          <a href="/contact" class="btn btn-primary">Request sandbox <span class="arrow" aria-hidden="true">→</span></a>
+          <a href="https://api.paleon-lab-fintech.co.uk/swagger.json" class="btn btn-ghost">View API spec</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="f-top">
+        <div>
+          <a href="/" class="brand" aria-label="Tessera Financial home">
+            <span class="brand-mark" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 26 26" fill="none"><rect x="0.5" y="0.5" width="25" height="25" rx="5" stroke="#f6f3ec" stroke-width="1"/><path d="M7 13L11.5 17.5L19 9" stroke="#f6f3ec" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span><span class="brand-name">Tessera<b> Financial</b></span><span class="brand-sub">Payments Infrastructure</span></span>
+          </a>
+          <p class="f-blurb">Fictional UK payments and settlement infrastructure. Demo environment — all data shown is synthetic.</p>
+        </div>
+        <div><h4>Product</h4><ul><li><a href="/services">Services</a></li><li><a href="/solutions">Solutions</a></li><li><a href="https://api.paleon-lab-fintech.co.uk/swagger.json">API reference</a></li><li><a href="https://app.paleon-lab-fintech.co.uk">Console</a></li></ul></div>
+        <div><h4>Company</h4><ul><li><a href="/about">About</a></li><li><a href="/resources">Resources</a></li><li><a href="/contact">Contact</a></li></ul></div>
+        <div><h4>Legal</h4><ul><li><a href="/resources#terms">Terms</a></li><li><a href="/resources#privacy">Privacy</a></li><li><a href="/resources#status">Status</a></li></ul></div>
+      </div>
+      <div class="f-bottom"><span>© <span id="year">2026</span> Tessera Financial Ltd (fictional). A Paleon test environment.</span><span class="legal"><a href="/resources#status">System status</a><a href="/about">FCA note</a></span></div>
+    </div>
+  </footer>
+  <script src="/js/main.js"></script>
+</body>
+</html>

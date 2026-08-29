@@ -1,0 +1,466 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Tessera Financial API",
+    "version": "1.0.0",
+    "description": "Payments, payouts, and ledger API for the fictional Tessera Financial platform. This specification is intentionally exposed for scanner testing in the Paleon lab. All data, examples, and credentials are synthetic.",
+    "contact": {
+      "name": "Tessera Financial (fictional)",
+      "email": "api@tessera.example",
+      "url": "https://paleon-lab-fintech.co.uk/contact"
+    },
+    "license": {
+      "name": "Proprietary (demo)",
+      "url": "https://paleon-lab-fintech.co.uk/resources#terms"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.paleon-lab-fintech.co.uk/v1",
+      "description": "Sandbox server (fictional)"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "tags": [
+    { "name": "Payments", "description": "Payment acceptance and management" },
+    { "name": "Payouts", "description": "Disbursements and supplier payments" },
+    { "name": "Ledger", "description": "Immutable ledger entries and trial balance" },
+    { "name": "Webhooks", "description": "Event subscription and delivery" },
+    { "name": "Merchants", "description": "Merchant onboarding and configuration" }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "In sandbox, any non-empty token is accepted and maps to demo merchant."
+      }
+    },
+    "schemas": {
+      "Payment": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid", "example": "T-9041" },
+          "merchant_id": { "type": "string", "format": "uuid", "example": "M-1234" },
+          "amount": { "type": "integer", "description": "Minor units (pence/cents)", "example": 12000 },
+          "currency": { "type": "string", "enum": ["GBP", "EUR", "USD"], "example": "GBP" },
+          "method": { "type": "string", "enum": ["card", "open_banking", "bacs"], "example": "card" },
+          "status": { "type": "string", "enum": ["pending", "authorized", "captured", "settled", "failed", "refunded"], "example": "settled" },
+          "reference": { "type": "string", "example": "ORD-2024-001234" },
+          "created_at": { "type": "string", "format": "date-time", "example": "2024-11-15T10:23:45Z" },
+          "settled_at": { "type": "string", "format": "date-time", "nullable": true, "example": "2024-11-15T10:24:12Z" }
+        },
+        "required": ["id", "merchant_id", "amount", "currency", "method", "status"]
+      },
+      "Payout": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid", "example": "P-7721" },
+          "merchant_id": { "type": "string", "format": "uuid", "example": "M-1234" },
+          "amount": { "type": "integer", "example": 231000 },
+          "currency": { "type": "string", "enum": ["GBP", "EUR", "USD"], "example": "GBP" },
+          "destination": { "$ref": "#/components/schemas/PayoutDestination" },
+          "status": { "type": "string", "enum": ["pending", "approved", "processing", "completed", "failed"], "example": "processing" },
+          "reference": { "type": "string", "example": "PAYROLL-NOV-2024" },
+          "created_at": { "type": "string", "format": "date-time", "example": "2024-11-15T09:00:00Z" }
+        },
+        "required": ["id", "merchant_id", "amount", "currency", "destination", "status"]
+      },
+      "PayoutDestination": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string", "enum": ["uk_sort_code_account", "iban", "virtual_iban"], "example": "uk_sort_code_account" },
+          "account_holder": { "type": "string", "example": "Acme Ltd" },
+          "sort_code": { "type": "string", "nullable": true, "example": "20-00-00" },
+          "account_number": { "type": "string", "nullable": true, "example": "55779911" },
+          "iban": { "type": "string", "nullable": true, "example": "GB29NWBK60161331926819" }
+        }
+      },
+      "LedgerEntry": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid", "example": "LE-88921" },
+          "merchant_id": { "type": "string", "format": "uuid", "example": "M-1234" },
+          "type": { "type": "string", "enum": ["payment_received", "fee_charged", "payout_sent", "refund_issued", "split_distributed"], "example": "payment_received" },
+          "amount": { "type": "integer", "description": "Minor units, positive for credits, negative for debits", "example": 12000 },
+          "currency": { "type": "string", "example": "GBP" },
+          "balance_after": { "type": "integer", "example": 2410000 },
+          "reference": { "type": "string", "example": "T-9041" },
+          "description": { "type": "string", "example": "Payment received · card (UK)" },
+          "created_at": { "type": "string", "format": "date-time", "example": "2024-11-15T10:24:12Z" }
+        },
+        "required": ["id", "merchant_id", "type", "amount", "currency", "balance_after"]
+      },
+      "TrialBalance": {
+        "type": "object",
+        "properties": {
+          "merchant_id": { "type": "string", "format": "uuid", "example": "M-1234" },
+          "as_at": { "type": "string", "format": "date-time", "example": "2024-11-15T12:00:00Z" },
+          "accounts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "code": { "type": "string", "example": "1200" },
+                "name": { "type": "string", "example": "Client Funds — Cleared" },
+                "type": { "type": "string", "enum": ["asset", "liability", "equity", "revenue", "expense"], "example": "asset" },
+                "balance": { "type": "integer", "example": 2410000 }
+              },
+              "required": ["code", "name", "type", "balance"]
+            }
+          }
+        },
+        "required": ["merchant_id", "as_at", "accounts"]
+      },
+      "WebhookEndpoint": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid", "example": "WE-4412" },
+          "merchant_id": { "type": "string", "format": "uuid", "example": "M-1234" },
+          "url": { "type": "string", "format": "uri", "example": "https://merchant.example/webhooks" },
+          "events": { "type": "array", "items": { "type": "string", "enum": ["payment.created", "payment.settled", "payout.completed", "refund.processed", "ledger.entry.posted"] }, "example": ["payment.settled", "payout.completed"] },
+          "secret": { "type": "string", "description": "HMAC-SHA256 secret for signature verification (never returned after creation)", "example": "whsec_..." },
+          "status": { "type": "string", "enum": ["active", "disabled", "failing"], "example": "active" },
+          "created_at": { "type": "string", "format": "date-time", "example": "2024-11-01T08:00:00Z" }
+        },
+        "required": ["id", "merchant_id", "url", "events", "status"]
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "code": { "type": "string", "example": "VALIDATION_ERROR" },
+          "message": { "type": "string", "example": "The request body failed validation." },
+          "details": { "type": "array", "items": { "type": "object", "properties": { "field": { "type": "string" }, "issue": { "type": "string" } } } }
+        }
+      },
+      "Page": {
+        "type": "object",
+        "properties": {
+          "data": { "type": "array", "items": {} },
+          "pagination": { "type": "object", "properties": { "cursor": { "type": "string", "nullable": true }, "has_more": { "type": "boolean" }, "limit": { "type": "integer", "example": 50 } } }
+        }
+      }
+    },
+    "headers": {
+      "Idempotency-Key": {
+        "description": "Client-generated unique key for safe retries (max 24h retention)",
+        "schema": { "type": "string", "example": "idem_20241115_abc123" }
+      },
+      "X-RateLimit-Remaining": {
+        "description": "Requests remaining in current window",
+        "schema": { "type": "integer", "example": 118 }
+      },
+      "X-RateLimit-Reset": {
+        "description": "Unix timestamp when limit resets",
+        "schema": { "type": "integer", "example": 1731672000 }
+      },
+      "Tessera-Signature": {
+        "description": "HMAC-SHA256 signature: t=<timestamp>,v1=<hex>",
+        "schema": { "type": "string", "example": "t=1731672000,v1=a1b2c3..." }
+      }
+    }
+  },
+  "paths": {
+    "/payments": {
+      "get": {
+        "tags": ["Payments"],
+        "summary": "List payments",
+        "operationId": "listPayments",
+        "parameters": [
+          { "name": "status", "in": "query", "schema": { "type": "string", "enum": ["pending", "authorized", "captured", "settled", "failed", "refunded"] } },
+          { "name": "method", "in": "query", "schema": { "type": "string", "enum": ["card", "open_banking", "bacs"] } },
+          { "name": "from", "in": "query", "schema": { "type": "string", "format": "date-time" } },
+          { "name": "to", "in": "query", "schema": { "type": "string", "format": "date-time" } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "minimum": 1, "maximum": 100, "default": 50 } },
+          { "name": "cursor", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated list of payments",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Page" }
+              }
+            },
+            "headers": {
+              "X-RateLimit-Remaining": { "$ref": "#/components/headers/X-RateLimit-Remaining" },
+              "X-RateLimit-Reset": { "$ref": "#/components/headers/X-RateLimit-Reset" }
+            }
+          },
+          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+          "429": { "description": "Rate limited", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
+      },
+      "post": {
+        "tags": ["Payments"],
+        "summary": "Create a payment intent",
+        "operationId": "createPayment",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["amount", "currency", "method"],
+                "properties": {
+                  "amount": { "type": "integer", "minimum": 1, "example": 12000 },
+                  "currency": { "type": "string", "enum": ["GBP", "EUR", "USD"], "example": "GBP" },
+                  "method": { "type": "string", "enum": ["card", "open_banking"], "example": "card" },
+                  "reference": { "type": "string", "maxLength": 64, "example": "ORD-2024-001234" },
+                  "return_url": { "type": "string", "format": "uri", "example": "https://merchant.example/return" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Payment created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Payment" }
+              }
+            },
+            "headers": {
+              "X-RateLimit-Remaining": { "$ref": "#/components/headers/X-RateLimit-Remaining" },
+              "X-RateLimit-Reset": { "$ref": "#/components/headers/X-RateLimit-Reset" }
+            }
+          },
+          "400": { "description": "Invalid request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+          "422": { "description": "Validation error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+          "429": { "description": "Rate limited", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
+      }
+    },
+    "/payments/{id}": {
+      "get": {
+        "tags": ["Payments"],
+        "summary": "Retrieve a payment",
+        "operationId": "getPayment",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Payment details",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Payment" }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+          "404": { "description": "Not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
+      }
+    },
+    "/payouts": {
+      "get": {
+        "tags": ["Payouts"],
+        "summary": "List payouts",
+        "operationId": "listPayouts",
+        "parameters": [
+          { "name": "status", "in": "query", "schema": { "type": "string", "enum": ["pending", "approved", "processing", "completed", "failed"] } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "minimum": 1, "maximum": 100, "default": 50 } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated list of payouts",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Page" }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Payouts"],
+        "summary": "Create a payout",
+        "operationId": "createPayout",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["amount", "currency", "destination", "reference"],
+                "properties": {
+                  "amount": { "type": "integer", "minimum": 1, "example": 231000 },
+                  "currency": { "type": "string", "enum": ["GBP", "EUR", "USD"], "example": "GBP" },
+                  "destination": { "$ref": "#/components/schemas/PayoutDestination" },
+                  "reference": { "type": "string", "maxLength": 64, "example": "PAYROLL-NOV-2024" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Payout created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Payout" }
+              }
+            },
+            "headers": {
+              "Idempotency-Key": { "$ref": "#/components/headers/Idempotency-Key" }
+            }
+          },
+          "400": { "description": "Invalid request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
+      }
+    },
+    "/payouts/{id}": {
+      "get": {
+        "tags": ["Payouts"],
+        "summary": "Retrieve a payout",
+        "operationId": "getPayout",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": { "description": "Payout details", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Payout" } } } },
+          "404": { "description": "Not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
+      }
+    },
+    "/ledger/entries": {
+      "get": {
+        "tags": ["Ledger"],
+        "summary": "Query ledger entries",
+        "operationId": "listLedgerEntries",
+        "parameters": [
+          { "name": "type", "in": "query", "schema": { "type": "string", "enum": ["payment_received", "fee_charged", "payout_sent", "refund_issued", "split_distributed"] } },
+          { "name": "from", "in": "query", "schema": { "type": "string", "format": "date-time" } },
+          { "name": "to", "in": "query", "schema": { "type": "string", "format": "date-time" } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "minimum": 1, "maximum": 200, "default": 100 } },
+          { "name": "cursor", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated ledger entries",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Page" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ledger/trial-balance": {
+      "get": {
+        "tags": ["Ledger"],
+        "summary": "Get current trial balance",
+        "operationId": "getTrialBalance",
+        "responses": {
+          "200": {
+            "description": "Trial balance snapshot",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/TrialBalance" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/webhooks/endpoints": {
+      "get": {
+        "tags": ["Webhooks"],
+        "summary": "List webhook endpoints",
+        "operationId": "listWebhookEndpoints",
+        "responses": {
+          "200": {
+            "description": "List of endpoints",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/WebhookEndpoint" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Webhooks"],
+        "summary": "Register a webhook endpoint",
+        "operationId": "createWebhookEndpoint",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["url", "events"],
+                "properties": {
+                  "url": { "type": "string", "format": "uri", "example": "https://merchant.example/webhooks" },
+                  "events": { "type": "array", "items": { "type": "string", "enum": ["payment.created", "payment.settled", "payout.completed", "refund.processed", "ledger.entry.posted"] }, "example": ["payment.settled"] }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Endpoint created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/WebhookEndpoint" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/webhooks/endpoints/{id}": {
+      "delete": {
+        "tags": ["Webhooks"],
+        "summary": "Delete a webhook endpoint",
+        "operationId": "deleteWebhookEndpoint",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "204": { "description": "Deleted" },
+          "404": { "description": "Not found" }
+        }
+      }
+    },
+    "/merchants/me": {
+      "get": {
+        "tags": ["Merchants"],
+        "summary": "Get current merchant profile",
+        "operationId": "getMerchantProfile",
+        "responses": {
+          "200": {
+            "description": "Merchant profile",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string", "format": "uuid", "example": "M-1234" },
+                    "name": { "type": "string", "example": "Demo Merchant Ltd" },
+                    "status": { "type": "string", "enum": ["active", "pending_kyc", "suspended"], "example": "active" },
+                    "settlement_schedule": { "type": "string", "enum": ["daily", "weekly", "manual"], "example": "daily" },
+                    "enabled_methods": { "type": "array", "items": { "type": "string", "enum": ["card", "open_banking", "bacs"] }, "example": ["card", "open_banking"] }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

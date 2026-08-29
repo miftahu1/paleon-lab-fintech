@@ -1,0 +1,95 @@
+# =============================================================================
+# Paleon Fintech Test Site (Site 1) — .gitignore
+# NEVER commit real secrets, keys, TLS private keys, or Terraform state.
+# =============================================================================
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+*~
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*.bak
+
+# Node / package managers (if any tooling added later)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Build output (none expected — static site)
+/dist/
+/build/
+
+# =============================================================================
+# SECRETS & KEYS — NEVER COMMIT
+# =============================================================================
+# Real .env with actual secrets (the test .env with FAKE values is committed intentionally)
+.env.real
+.env.local
+.env.*.local
+*.env
+!.env                      # Keep the intentional fake test .env
+
+# TLS private keys & certificates
+*.key
+*.pem
+*.p12
+*.pfx
+*.crt
+/etc/ssl/private/
+private_keys/
+
+# SSH keys
+id_rsa
+id_rsa.pub
+*.pem
+ssh_key*
+
+# AWS credentials
+.aws/
+aws_credentials
+credentials
+config
+
+# Terraform state & local files
+terraform/.terraform/
+terraform/.terraform.lock.hcl
+terraform/terraform.tfstate
+terraform/terraform.tfstate.*
+terraform/tfplan
+terraform/*.tfplan
+terraform/.terraform/
+
+# Ansible vault
+*.vault
+*.vault.yml
+
+# Logs
+*.log
+/logs/
+access.log
+error.log
+
+# Temporary files
+.tmp/
+tmp/
+*.tmp
+.cache/
+
+# Backup archives (real data)
+*.tar.gz
+*.zip
+backups/
+backup-*/

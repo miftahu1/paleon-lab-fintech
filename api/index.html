@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Reference — Tessera Financial</title>
+  <meta name="description" content="Tessera Financial API — OpenAPI 3.1 spec for the fictional payments platform. Exposed at /swagger.json for scanner testing.">
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="/" class="brand" aria-label="Tessera Financial home">
+        <span class="brand-mark" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 26 26" fill="none"><rect x="0.5" y="0.5" width="25" height="25" rx="5" stroke="#1f4d3c" stroke-width="1"/><path d="M7 13L11.5 17.5L19 9" stroke="#1f4d3c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span><span class="brand-name">Tessera<b> Financial</b></span><span class="brand-sub">API Reference</span></span>
+      </a>
+      <nav class="main-nav" id="primaryNav" aria-label="Primary">
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/services">Services</a></li>
+          <li><a href="https://app.paleon-lab-fintech.co.uk">Console</a></li>
+          <li><a href="/contact" class="nav-cta">Contact</a></li>
+        </ul>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="primaryNav"><span></span></button>
+    </div>
+  </header>
+
+  <main class="api-shell">
+    <div class="api-block">
+      <p class="eyebrow"><span class="num">01</span> OpenAPI 3.1</p>
+      <h2>Machine-readable spec</h2>
+      <p class="muted">The authoritative contract for the Tessera API is served as <code>swagger.json</code> at this host. In this test environment the document contains only synthetic definitions and placeholder examples.</p>
+      <div style="display:flex; gap:var(--s-2); flex-wrap:wrap; margin-top:var(--s-3);">
+        <a href="/swagger.json" class="btn btn-primary">Download swagger.json <span class="arrow" aria-hidden="true">→</span></a>
+        <a href="/contact" class="btn btn-ghost">Integration support</a>
+      </div>
+    </div>
+
+    <div class="api-block">
+      <p class="eyebrow"><span class="num">02</span> Quick links</p>
+      <h2>Common endpoints (fictional)</h2>
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:var(--s-2);">
+        <div class="panel" style="padding:var(--s-2);">
+          <span class="api-method get">GET</span> <code>/v1/payments</code>
+          <p class="muted note-fine mt-2">List payments with pagination & filters</p>
+        </div>
+        <div class="panel" style="padding:var(--s-2);">
+          <span class="api-method post">POST</span> <code>/v1/payments</code>
+          <p class="muted note-fine mt-2">Create a new payment intent</p>
+        </div>
+        <div class="panel" style="padding:var(--s-2);">
+          <span class="api-method get">GET</span> <code>/v1/payments/{id}</code>
+          <p class="muted note-fine mt-2">Retrieve a single payment by ID</p>
+        </div>
+        <div class="panel" style="padding:var(--s-2);">
+          <span class="api-method post">POST</span> <code>/v1/payouts</code>
+          <p class="muted note-fine mt-2">Initiate a payout or batch</p>
+        </div>
+        <div class="panel" style="padding:var(--s-2);">
+          <span class="api-method get">GET</span> <code>/v1/ledger/entries</code>
+          <p class="muted note-fine mt-2">Query immutable ledger entries</p>
+        </div>
+        <div class="panel" style="padding:var(--s-2);">
+          <span class="api-method get">GET</span> <code>/v1/ledger/trial-balance</code>
+          <p class="muted note-fine mt-2">Real-time trial balance snapshot</p>
+        </div>
+        <div class="panel" style="padding:var(--s-2);">
+          <span class="api-method get">GET</span> <code>/v1/webhooks/endpoints</code>
+          <p class="muted note-fine mt-2">List registered webhook endpoints</p>
+        </div>
+        <div class="panel" style="padding:var(--s-2);">
+          <span class="api-method post">POST</span> <code>/v1/webhooks/endpoints</code>
+          <p class="muted note-fine mt-2">Register a new webhook endpoint</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="api-block">
+      <p class="eyebrow"><span class="num">03</span> Authentication</p>
+      <h2>Bearer tokens (sandbox)</h2>
+      <p class="muted">All API calls require an <code>Authorization: Bearer <token></code> header. In the sandbox, any non-empty token is accepted and maps to the demo merchant.</p>
+      <pre>curl -H "Authorization: Bearer test_sandbox_token" \
+  https://api.paleon-lab-fintech.co.uk/v1/payments</pre>
+    </div>
+
+    <div class="api-block">
+      <p class="eyebrow"><span class="num">04</span> Idempotency</p>
+      <h2>Safe retries</h2>
+      <p class="muted">Include an <code>Idempotency-Key</code> header on any write request. The same key within 24h returns the original response — safe to retry on network errors.</p>
+      <pre>curl -X POST -H "Authorization: Bearer test_sandbox_token" \
+  -H "Idempotency-Key: unique-key-per-request" \
+  -H "Content-Type: application/json" \
+  -d '{"amount":1000,"currency":"GBP"}' \
+  https://api.paleon-lab-fintech.co.uk/v1/payments</pre>
+    </div>
+
+    <div class="api-block">
+      <p class="eyebrow"><span class="num">05</span> Webhook signatures</p>
+      <h2>HMAC-SHA256 verification</h2>
+      <p class="muted">Events are signed with a per-endpoint secret. Verify the <code>Tessera-Signature</code> header (timestamp + SHA256) before trusting any event.</p>
+    </div>
+
+    <div class="api-block">
+      <p class="eyebrow"><span class="num">06</span> Notice</p>
+      <h2>This is a test environment</h2>
+      <p class="muted">No real API exists. The <code>swagger.json</code> document is intentionally exposed for scanner testing. All schemas, examples and examples are synthetic. No authentication, rate-limiting or data persistence is implemented.</p>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="f-top">
+        <div>
+          <a href="/" class="brand" aria-label="Tessera Financial home">
+            <span class="brand-mark" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 26 26" fill="none"><rect x="0.5" y="0.5" width="25" height="25" rx="5" stroke="#f6f3ec" stroke-width="1"/><path d="M7 13L11.5 17.5L19 9" stroke="#f6f3ec" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span><span class="brand-name">Tessera<b> Financial</b></span><span class="brand-sub">Payments Infrastructure</span></span>
+          </a>
+          <p class="f-blurb">Fictional UK payments and settlement infrastructure. Demo environment — all data shown is synthetic.</p>
+        </div>
+        <div><h4>Product</h4><ul><li><a href="/services">Services</a></li><li><a href="/solutions">Solutions</a></li><li><a href="/swagger.json">API reference</a></li><li><a href="https://app.paleon-lab-fintech.co.uk">Console</a></li></ul></div>
+        <div><h4>Company</h4><ul><li><a href="/about">About</a></li><li><a href="/resources">Resources</a></li><li><a href="/contact">Contact</a></li></ul></div>
+        <div><h4>Legal</h4><ul><li><a href="/resources#terms">Terms</a></li><li><a href="/resources#privacy">Privacy</a></li><li><a href="/resources#status">Status</a></li></ul></div>
+      </div>
+      <div class="f-bottom"><span>© <span id="year">2026</span> Tessera Financial Ltd (fictional). A Paleon test environment.</span><span class="legal"><a href="/resources#status">System status</a><a href="/about">FCA note</a></span></div>
+    </div>
+  </footer>
+  <script src="/js/main.js"></script>
+</body>
+</html>

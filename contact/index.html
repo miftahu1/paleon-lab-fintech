@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact — Tessera Financial</title>
+  <meta name="description" content="Contact the fictional Tessera Financial team. This form performs local validation only; no data is transmitted or stored.">
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="/" class="brand" aria-label="Tessera Financial home">
+        <span class="brand-mark" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 26 26" fill="none"><rect x="0.5" y="0.5" width="25" height="25" rx="5" stroke="#1f4d3c" stroke-width="1"/><path d="M7 13L11.5 17.5L19 9" stroke="#1f4d3c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span><span class="brand-name">Tessera<b> Financial</b></span><span class="brand-sub">Payments Infrastructure</span></span>
+      </a>
+      <nav class="main-nav" id="primaryNav" aria-label="Primary">
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/services">Services</a></li>
+          <li><a href="/solutions">Solutions</a></li>
+          <li><a href="/resources">Resources</a></li>
+          <li><a href="/about">About</a></li>
+          <li><a href="/contact" class="active nav-cta">Contact</a></li>
+        </ul>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="primaryNav"><span></span></button>
+    </div>
+  </header>
+
+  <main>
+    <section class="page-intro">
+      <div class="container">
+        <p class="breadcrumb"><a href="/">Home</a> / Contact</p>
+        <p class="eyebrow"><span class="num">01</span> Get in touch</p>
+        <h1>Talk to the team.</h1>
+        <p class="lede">Tell us what you are building. In this lab the form simply acknowledges locally — nothing leaves your browser.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="grid-2">
+          <div>
+            <form id="contactForm" class="panel" novalidate>
+              <div class="form-row">
+                <div class="field">
+                  <label for="name">Full name</label>
+                  <input id="name" name="name" type="text" autocomplete="name" required aria-required="true">
+                </div>
+                <div class="field">
+                  <label for="company">Company</label>
+                  <input id="company" name="company" type="text" autocomplete="organization">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="field">
+                  <label for="email">Work email</label>
+                  <input id="email" name="email" type="email" autocomplete="email" required aria-required="true">
+                </div>
+                <div class="field">
+                  <label for="topic">Topic</label>
+                  <select id="topic" name="topic">
+                    <option>Sandbox access</option>
+                    <option>Pricing</option>
+                    <option>Integration</option>
+                    <option>Partnership</option>
+                    <option>Other</option>
+                  </select>
+                </div>
+              </div>
+              <div class="field">
+                <label for="message">How can we help?</label>
+                <textarea id="message" name="message" required aria-required="true"></textarea>
+                <p class="hint">This is a test environment — please do not include real personal or financial information.</p>
+              </div>
+              <button type="submit" class="btn btn-primary">Send message <span class="arrow" aria-hidden="true">→</span></button>
+              <p class="form-success" id="formSuccess" role="status" aria-live="polite">Thanks — your message passed local validation. (Demo only: nothing was sent or stored.)</p>
+            </form>
+          </div>
+
+          <div>
+            <div class="panel mt-0">
+              <h3>Other routes</h3>
+              <p class="muted">Prefer a document? The API is the fastest way to understand the platform.</p>
+              <ul class="checks">
+                <li><a href="https://api.paleon-lab-fintech.co.uk/swagger.json">Read the OpenAPI spec</a></li>
+                <li><a href="https://app.paleon-lab-fintech.co.uk">Open the console (sandbox)</a></li>
+                <li><a href="/resources">Browse the guides</a></li>
+              </ul>
+            </div>
+            <div class="panel mt-3">
+              <h3>Registered address (fictional)</h3>
+              <p class="muted" style="font-family:var(--mono);font-size:.86rem;line-height:1.7;">
+                Tessera Financial Ltd (imagined)<br>
+                Floor 3, 41 Spring Gardens<br>
+                Manchester, M2 2BX<br>
+                United Kingdom
+              </p>
+              <p class="note-fine">Illustrative only. Not a real company or location.</p>
+            </div>
+            <div class="old-note mt-3">
+              <strong>Notice:</strong> This contact form performs client-side validation only. No backend exists, no email is sent, and no data is persisted.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="f-top">
+        <div>
+          <a href="/" class="brand" aria-label="Tessera Financial home">
+            <span class="brand-mark" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 26 26" fill="none"><rect x="0.5" y="0.5" width="25" height="25" rx="5" stroke="#f6f3ec" stroke-width="1"/><path d="M7 13L11.5 17.5L19 9" stroke="#f6f3ec" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span><span class="brand-name">Tessera<b> Financial</b></span><span class="brand-sub">Payments Infrastructure</span></span>
+          </a>
+          <p class="f-blurb">Fictional UK payments and settlement infrastructure. Demo environment — all data shown is synthetic.</p>
+        </div>
+        <div><h4>Product</h4><ul><li><a href="/services">Services</a></li><li><a href="/solutions">Solutions</a></li><li><a href="https://api.paleon-lab-fintech.co.uk/swagger.json">API reference</a></li><li><a href="https://app.paleon-lab-fintech.co.uk">Console</a></li></ul></div>
+        <div><h4>Company</h4><ul><li><a href="/about">About</a></li><li><a href="/resources">Resources</a></li><li><a href="/contact">Contact</a></li></ul></div>
+        <div><h4>Legal</h4><ul><li><a href="/resources#terms">Terms</a></li><li><a href="/resources#privacy">Privacy</a></li><li><a href="/resources#status">Status</a></li></ul></div>
+      </div>
+      <div class="f-bottom"><span>© <span id="year">2026</span> Tessera Financial Ltd (fictional). A Paleon test environment.</span><span class="legal"><a href="/resources#status">System status</a><a href="/about">FCA note</a></span></div>
+    </div>
+  </footer>
+  <script src="/js/main.js"></script>
+</body>
+</html>
