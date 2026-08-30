@@ -35,12 +35,18 @@ venv/
 # =============================================================================
 # SECRETS & KEYS — NEVER COMMIT
 # =============================================================================
-# Real .env with actual secrets (the test .env with FAKE values is committed intentionally)
+# Real environment files must remain protected.
+# The repository intentionally commits one synthetic .env file with fake values only.
+.env
 .env.real
 .env.local
 .env.*.local
+.env.*
+!.env
+
+# Ignore generated environment files, but keep the repository-safe test file tracked.
 *.env
-!.env                      # Keep the intentional fake test .env
+!*.env.example
 
 # TLS private keys & certificates
 *.key
