@@ -34,7 +34,7 @@ output "domain_name" {
 
 output "next_steps" {
   description = "Post-apply checklist"
-  value = <<-EOT
+  value       = <<-EOT
     1. Configure DNS (if not using Route53):
        A records → ${aws_eip.web.public_ip} for: ${var.domain_name}, www, app, api, dev
        CNAME staging → staging.${var.domain_name}.s3-website-eu-west-1.amazonaws.com

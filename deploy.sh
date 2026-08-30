@@ -63,8 +63,9 @@ sudo cp -r /tmp/fintech-site/app/* ${REMOTE_ROOT}/app/
 sudo cp -r /tmp/fintech-site/api/* ${REMOTE_ROOT}/api/
 sudo cp -r /tmp/fintech-site/dev/* ${REMOTE_ROOT}/dev/
 sudo chown -R www-data:www-data ${REMOTE_ROOT}
-sudo chmod -R 755 ${REMOTE_ROOT}
-sudo chmod 644 ${REMOTE_ROOT}/main/.env
+# Set directories to 755, files to 644 (not all executable)
+sudo find ${REMOTE_ROOT} -type d -exec chmod 755 {} \;
+sudo find ${REMOTE_ROOT} -type f -exec chmod 644 {} \;
 echo "files placed"
 EOF
 

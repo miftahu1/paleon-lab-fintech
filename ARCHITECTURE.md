@@ -135,7 +135,7 @@ Outbound Rules:
 | Component | Version/Package | Purpose |
 |-----------|----------------|---------|
 | Nginx | Ubuntu default (1.24+) | Web server, 4 vhosts |
-| libnginx-mod-http-headers-more | Ubuntu package | `more_set_headers` for custom Server header |
+| libnginx-mod-http-headers-more-filter | Ubuntu package | `more_set_headers` for custom Server header |
 | socat | Ubuntu package | Dummy TCP listener on 5432 |
 | openssl | Ubuntu package | Self-signed certificate generation |
 | git | Ubuntu package | Deploy from repository |
@@ -243,7 +243,7 @@ nginx 1.14.0 reached **End of Life on 2019-10-01**.
 - Controllable: exact version string set in config
 - No need to install old nginx binary
 - Works with any nginx version
-- Requires `libnginx-mod-http-headers-more` package (Ubuntu 24.04+)
+- Requires `libnginx-mod-http-headers-more-filter` package (Ubuntu 24.04+)
 
 ### Legacy TLS on Dev Host
 

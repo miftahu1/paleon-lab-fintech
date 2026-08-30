@@ -48,13 +48,21 @@ data "aws_ami" "ubuntu" {
   owners      = ["099720109477"] # Canonical
 
   filter {
-    name   = "name"
-    values = ["ubuntu/images/hvm-ssd-gp3/*ubuntu-*26.04-arm64-server-*"]
+    name = "name"
+    values = [
+      "ubuntu/images/hvm-ssd-gp3/ubuntu-noble-26.04-arm64-server-*",
+      "ubuntu/images/hvm-ssd-gp3/*ubuntu-*26.04-arm64-server-*",
+    ]
   }
 
   filter {
     name   = "virtualization-type"
     values = ["hvm"]
+  }
+
+  filter {
+    name   = "architecture"
+    values = ["arm64"]
   }
 }
 
@@ -179,12 +187,18 @@ resource "aws_key_pair" "deploy" {
 # --- EC2 Instance ------------------------------------------------------------
 
 resource "aws_instance" "web" {
-  ami                    = data.aws_ami.ubuntu.id
-  instance_type          = var.instance_type
-  key_name               = aws_key_pair.deploy.key_name
-  vpc_security_group_ids = [aws_security_group.web.id]
-  subnet_id              = aws_subnet.public.id
+  ami                         = data.aws_ami.ubuntu.id
+  instance_type               = var.instance_type
+  key_name                    = aws_key_pair.deploy.key_name
+  vpc_security_group_ids      = [aws_security_group.web.id]
+  subnet_id                   = aws_subnet.public.id
   associate_public_ip_address = true
+
+  # Enforce IMDSv2 (required for security)
+  metadata_options {
+    http_tokens                 = "required"
+    http_put_response_hop_limit = 2
+  }
 
   root_block_device {
     volume_type = "gp3"
@@ -197,7 +211,7 @@ resource "aws_instance" "web" {
     set -e
     apt update
     apt upgrade -y
-    apt install -y nginx libnginx-mod-http-headers-more socat openssl git ufw
+    apt install -y nginx libnginx-mod-http-headers-more-filter socat openssl git ufw
 
     # Firewall: allow 80, 443, 5432, 22 (SSH from anywhere at OS level; SG restricts)
     ufw allow 80/tcp

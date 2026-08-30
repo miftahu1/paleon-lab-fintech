@@ -121,7 +121,7 @@ sudo apt update && sudo apt upgrade -y
 
 ```bash
 sudo apt install -y nginx
-sudo apt install -y libnginx-mod-http-headers-more
+sudo apt install -y libnginx-mod-http-headers-more-filter
 sudo apt install -y socat
 sudo apt install -y openssl
 sudo apt install -y git
@@ -130,7 +130,7 @@ sudo apt install -y git
 Verify headers-more module:
 
 ```bash
-dpkg -l | grep libnginx-mod-http-headers-more
+dpkg -l | grep libnginx-mod-http-headers-more-filter
 ```
 
 ---
@@ -186,8 +186,9 @@ sudo cp -r /tmp/fintech-site/dev/* /var/www/paleon-fintech/dev/
 
 ```bash
 sudo chown -R www-data:www-data /var/www/paleon-fintech
-sudo chmod -R 755 /var/www/paleon-fintech
-sudo chmod 644 /var/www/paleon-fintech/main/.env
+# Set directories to 755, files to 644 (not all executable)
+sudo find /var/www/paleon-fintech -type d -exec chmod 755 {} \;
+sudo find /var/www/paleon-fintech -type f -exec chmod 644 {} \;
 ```
 
 ---
@@ -355,8 +356,8 @@ sudo ss -tlnp | grep 5432
 ### Issue: more_set_headers not working
 
 ```bash
-dpkg -l | grep libnginx-mod-http-headers-more
-# If missing: sudo apt install libnginx-mod-http-headers-more
+dpkg -l | grep libnginx-mod-http-headers-more-filter
+# If missing: sudo apt install libnginx-mod-http-headers-more-filter
 sudo nginx -t && sudo systemctl reload nginx
 ```
 

@@ -25,8 +25,14 @@ site:
     - "api.paleon-lab-fintech.co.uk"
     - "dev.paleon-lab-fintech.co.uk"
     - "staging.paleon-lab-fintech.co.uk"  # CNAME only, no server block
+    - "dev-old.paleon-lab-fintech.co.uk"  # CNAME only, no server block
 
-expected_findings:
+# =============================================================================
+# CATEGORY 1: ACTUAL SCANNER DETECTIONS (Intentional Issues to Find)
+# These are findings that represent intentional test conditions — issues a
+# scanner SHOULD detect and report. Severity varies by risk level.
+# =============================================================================
+scanner_detections:
   # ---------------------------------------------------------------------------
   # MAIN SITE (paleon-lab-fintech.co.uk)
   # ---------------------------------------------------------------------------
@@ -38,59 +44,13 @@ expected_findings:
     description: "The main site serves an .env file at the web root. All values are fake placeholders (see .env content). No real secrets are present."
     severity: "observed"
     status: "must_be_reported"
+    category: "intentional-issue"
     evidence:
       - "HTTP 200 response at /.env"
       - "Content-Type: text/plain"
       - "Contains APP_ENV=development, DEMO_KEY=placeholder-demo-key"
       - "Contains fake AWS ARN: arn:aws:example:eu-west-2:123456789012:example-resource"
     notes: "Intentionally exposed for scanner testing. All values are synthetic."
-
-  - id: "fintech-main-env-fake-aws-arn"
-    host: "paleon-lab-fintech.co.uk"
-    path: "/.env"
-    type: "secret-shaped-reference"
-    title: "Fake AWS ARN reference in exposed .env"
-    description: "The exposed .env contains a string matching the AWS ARN pattern (arn:aws:example:...) that is intentionally fake (uses 'example' partition)."
-    severity: "observed"
-    status: "must_be_reported"
-    must_not_flag_as: "real-aws-secret"
-    evidence:
-      - "Value: arn:aws:example:eu-west-2:123456789012:example-resource"
-      - "Partition 'example' is not a valid AWS partition (valid: aws, aws-cn, aws-us-gov)"
-      - "Account ID 123456789012 is the AWS documentation example"
-    notes: "Scanner MUST NOT flag this as a real secret. It is a documented false-positive test case."
-
-  - id: "fintech-main-hsts-present"
-    host: "paleon-lab-fintech.co.uk"
-    type: "security-header-present"
-    title: "HSTS header present on main site"
-    description: "Main site includes Strict-Transport-Security header with 1-year max-age and includeSubDomains."
-    severity: "observed"
-    status: "must_be_reported"
-    evidence:
-      - "Header: Strict-Transport-Security: max-age=31536000; includeSubDomains"
-    notes: "This is a positive finding (header present). Included for completeness."
-
-  - id: "fintech-main-csp-present"
-    host: "paleon-lab-fintech.co.uk"
-    type: "security-header-present"
-    title: "Content-Security-Policy header present"
-    description: "Main site includes a restrictive CSP header."
-    severity: "observed"
-    status: "must_be_reported"
-    evidence:
-      - "Header: Content-Security-Policy: default-src 'self'; img-src 'self' data:; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self'"
-
-  - id: "fintech-main-clean-urls"
-    host: "paleon-lab-fintech.co.uk"
-    type: "clean-url-routing"
-    title: "Clean URL routing (no .html extensions)"
-    description: "Routes like /about, /services, /solutions, /resources, /contact serve index.html from directories without .html in URL."
-    severity: "observed"
-    status: "must_be_reported"
-    evidence:
-      - "HTTP 200 for /about, /services, /solutions, /resources, /contact"
-      - "No redirect to .html variants"
 
   # ---------------------------------------------------------------------------
   # APP HOST (app.paleon-lab-fintech.co.uk)
@@ -102,6 +62,7 @@ expected_findings:
     description: "The app.paleon-lab-fintech.co.uk host intentionally omits the Strict-Transport-Security header."
     severity: "observed"
     status: "must_be_reported"
+    category: "intentional-issue"
     evidence:
       - "No Strict-Transport-Security header in HTTPS response"
       - "Other headers (X-Content-Type-Options, X-Frame-Options) are present"
@@ -114,6 +75,7 @@ expected_findings:
     description: "The app console is accessible without any authentication mechanism."
     severity: "observed"
     status: "must_be_reported"
+    category: "intentional-issue"
     evidence:
       - "Direct access to https://app.paleon-lab-fintech.co.uk returns 200"
       - "No login redirect, no auth challenge"
@@ -130,6 +92,7 @@ expected_findings:
     description: "The API host serves a complete OpenAPI 3.1 document at /swagger.json. The spec contains only synthetic definitions and placeholder examples — no real API exists."
     severity: "observed"
     status: "must_be_reported"
+    category: "intentional-issue"
     evidence:
       - "HTTP 200 at /swagger.json"
       - "Content-Type: application/json"
@@ -137,21 +100,6 @@ expected_findings:
       - "info.title: Tessera Financial API"
       - "servers[0].url: https://api.paleon-lab-fintech.co.uk/v1"
     notes: "Intentional exposure for scanner testing. All schemas/examples are fake."
-
-  - id: "fintech-api-fake-examples"
-    host: "api.paleon-lab-fintech.co.uk"
-    path: "/swagger.json"
-    type: "synthetic-data"
-    title: "OpenAPI spec contains only synthetic/fake examples"
-    description: "All example values in the OpenAPI spec are recognizably fake (T-9041, M-1234, GB29NWBK..., whsec_...). No real customer data."
-    severity: "observed"
-    status: "must_be_reported"
-    evidence:
-      - "Payment example id: T-9041"
-      - "Merchant example id: M-1234"
-      - "IBAN example: GB29NWBK60161331926819 (valid format, fake)"
-      - "Webhook secret example: whsec_fakeplaceholder123"
-    notes: "Scanner should recognize these as test data patterns."
 
   # ---------------------------------------------------------------------------
   # DEV HOST (dev.paleon-lab-fintech.co.uk)
@@ -163,6 +111,7 @@ expected_findings:
     description: "The dev host explicitly sets 'Server: nginx/1.14.0' via more_set_headers. nginx 1.14.0 reached EOL on 2019-10-01."
     severity: "detected"
     status: "must_be_reported"
+    category: "intentional-issue"
     classification: "outdated-component"
     evidence:
       - "HTTP response header: Server: nginx/1.14.0"
@@ -176,6 +125,7 @@ expected_findings:
     description: "The dev host enables TLSv1 and TLSv1.1 in addition to 1.2/1.3."
     severity: "observed"
     status: "must_be_reported"
+    category: "intentional-issue"
     evidence:
       - "ssl_protocols includes TLSv1 TLSv1.1 TLSv1.2 TLSv1.3"
       - "TLS 1.0/1.1 deprecated (RFC 8996)"
@@ -188,12 +138,13 @@ expected_findings:
     description: "The dev host omits Strict-Transport-Security header."
     severity: "observed"
     status: "must_be_reported"
+    category: "intentional-issue"
     evidence:
       - "No Strict-Transport-Security header in HTTPS response"
     notes: "Intentional for legacy host simulation."
 
   # ---------------------------------------------------------------------------
-  # STAGING HOST (staging.paleon-lab-fintech.co.uk)
+  # STAGING / DEV-OLD (Subdomain takeover indicators)
   # ---------------------------------------------------------------------------
   - id: "fintech-staging-dangling-cname"
     host: "staging.paleon-lab-fintech.co.uk"
@@ -202,6 +153,7 @@ expected_findings:
     description: "DNS CNAME points to staging.paleon-lab-fintech.co.uk.s3-website-eu-west-1.amazonaws.com which does not exist and cannot be claimed."
     severity: "observed"
     status: "must_be_reported"
+    category: "intentional-issue"
     classification: "safe-indicator"
     evidence:
       - "CNAME record exists"
@@ -216,6 +168,7 @@ expected_findings:
     description: "DNS CNAME points to paleon-lab-old-env.herokudns.com which does not exist and cannot be claimed."
     severity: "observed"
     status: "must_be_reported"
+    category: "intentional-issue"
     classification: "safe-indicator"
     evidence:
       - "CNAME record exists"
@@ -231,31 +184,12 @@ expected_findings:
     description: "Port 5432 (PostgreSQL default) accepts TCP connections from the Internet. A dummy listener (socat) accepts and immediately closes connections. No PostgreSQL service is running."
     severity: "observed"
     status: "must_be_reported"
+    category: "intentional-issue"
     evidence:
       - "TCP SYN to port 5432 returns SYN-ACK"
       - "Connection accepted then closed (no PostgreSQL protocol)"
       - "No banner, no authentication prompt"
     notes: "Intentional test condition. Scanner should report 'port 5432 open/reachable' not 'PostgreSQL service detected'. No real database exists."
-
-  - id: "fintech-port-22-restricted"
-    type: "ssh-restricted"
-    title: "SSH (port 22) restricted to admin IP"
-    description: "Port 22 is only accessible from the administrator IP address."
-    severity: "observed"
-    status: "must_be_reported"
-    evidence:
-      - "Connection from admin IP: succeeds"
-      - "Connection from other IPs: filtered/timeout"
-
-  - id: "fintech-ports-not-exposed"
-    type: "port-not-exposed"
-    title: "Common risky ports NOT exposed"
-    description: "The following ports are confirmed NOT reachable from the Internet: 3306 (MySQL), 3389 (RDP), 445 (SMB), 23 (Telnet), 25 (SMTP), 6379 (Redis), 27017 (MongoDB)."
-    severity: "observed"
-    status: "must_be_reported"
-    evidence:
-      - "TCP SYN to each port: filtered/timeout"
-    notes: "Positive finding — these ports are correctly closed."
 
   # ---------------------------------------------------------------------------
   # DNS
@@ -266,6 +200,7 @@ expected_findings:
     description: "The domain's DMARC record specifies p=none (monitoring only, no enforcement)."
     severity: "observed"
     status: "must_be_reported"
+    category: "intentional-issue"
     evidence:
       - "TXT _dmarc.paleon-lab-fintech.co.uk: v=DMARC1; p=none; rua=mailto:dmarc@paleon-lab-fintech.co.uk"
 
@@ -275,6 +210,7 @@ expected_findings:
     description: "SPF record uses softfail (~all) instead of hardfail (-all)."
     severity: "observed"
     status: "must_be_reported"
+    category: "intentional-issue"
     evidence:
       - "TXT paleon-lab-fintech.co.uk: v=spf1 include:_spf.google.com ~all"
 
@@ -284,58 +220,194 @@ expected_findings:
     description: "The domain does not have DNSSEC enabled (no DS records in parent zone)."
     severity: "observed"
     status: "must_be_reported"
+    category: "intentional-issue"
     evidence:
       - "dig +dnssec paleon-lab-fintech.co.uk shows no RRSIG/DS"
     notes: "Intentional omission for testing."
 
-must_not_flag:
-  # These are patterns that scanners MUST NOT report as real findings
+# =============================================================================
+# CATEGORY 2: POSITIVE OBSERVATIONS (Security Controls Working)
+# These are findings that represent GOOD security posture — things a scanner
+# SHOULD observe and report as positive (or at minimum, verify they exist).
+# These are NOT issues; they are evidence of correctly implemented controls.
+# =============================================================================
+positive_observations:
+  - id: "fintech-main-hsts-present"
+    host: "paleon-lab-fintech.co.uk"
+    type: "security-header-present"
+    title: "HSTS header present on main site"
+    description: "Main site includes Strict-Transport-Security header with 1-year max-age and includeSubDomains."
+    severity: "observed"
+    status: "must_be_reported"
+    category: "positive-observation"
+    evidence:
+      - "Header: Strict-Transport-Security: max-age=31536000; includeSubDomains"
+    notes: "This is a positive finding (header present). Included for completeness."
+
+  - id: "fintech-main-csp-present"
+    host: "paleon-lab-fintech.co.uk"
+    type: "security-header-present"
+    title: "Content-Security-Policy header present"
+    description: "Main site includes a restrictive CSP header."
+    severity: "observed"
+    status: "must_be_reported"
+    category: "positive-observation"
+    evidence:
+      - "Header: Content-Security-Policy: default-src 'self'; img-src 'self' data:; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self'"
+
+  - id: "fintech-main-clean-urls"
+    host: "paleon-lab-fintech.co.uk"
+    type: "clean-url-routing"
+    title: "Clean URL routing (no .html extensions)"
+    description: "Routes like /about, /services, /solutions, /resources, /contact serve index.html from directories without .html in URL."
+    severity: "observed"
+    status: "must_be_reported"
+    category: "positive-observation"
+    evidence:
+      - "HTTP 200 for /about, /services, /solutions, /resources, /contact"
+      - "No redirect to .html variants"
+
+  - id: "fintech-api-hsts-present"
+    host: "api.paleon-lab-fintech.co.uk"
+    type: "security-header-present"
+    title: "HSTS header present on API host"
+    description: "API host includes Strict-Transport-Security header with 1-year max-age."
+    severity: "observed"
+    status: "must_be_reported"
+    category: "positive-observation"
+    evidence:
+      - "Header: Strict-Transport-Security: max-age=31536000"
+
+  - id: "fintech-port-22-restricted"
+    type: "ssh-restricted"
+    title: "SSH (port 22) restricted to admin IP"
+    description: "Port 22 is only accessible from the administrator IP address."
+    severity: "observed"
+    status: "must_be_reported"
+    category: "positive-observation"
+    evidence:
+      - "Connection from admin IP: succeeds"
+      - "Connection from other IPs: filtered/timeout"
+
+  - id: "fintech-ports-not-exposed"
+    type: "port-not-exposed"
+    title: "Common risky ports NOT exposed"
+    description: "The following ports are confirmed NOT reachable from the Internet: 3306 (MySQL), 3389 (RDP), 445 (SMB), 23 (Telnet), 25 (SMTP), 6379 (Redis), 27017 (MongoDB)."
+    severity: "observed"
+    status: "must_be_reported"
+    category: "positive-observation"
+    evidence:
+      - "TCP SYN to each port: filtered/timeout"
+    notes: "Positive finding — these ports are correctly closed."
+
+  - id: "fintech-tls-cert-valid"
+    host: "paleon-lab-fintech.co.uk"
+    type: "tls-certificate-valid"
+    title: "TLS certificate is valid (not expired)"
+    description: "The self-signed TLS certificate for all hosts is valid for 10 years and not expired."
+    severity: "observed"
+    status: "must_be_reported"
+    category: "positive-observation"
+    evidence:
+      - "Certificate NotAfter date is in the future"
+      - "SANs include all 5 hosts"
+    notes: "Unlike Site 4 (Northbridge), this site uses a VALID certificate."
+
+  - id: "fintech-api-fake-examples"
+    host: "api.paleon-lab-fintech.co.uk"
+    path: "/swagger.json"
+    type: "synthetic-data"
+    title: "OpenAPI spec contains only synthetic/fake examples"
+    description: "All example values in the OpenAPI spec are recognizably fake (T-9041, M-1234, GB29NWBK..., whsec_...). No real customer data."
+    severity: "observed"
+    status: "must_be_reported"
+    category: "positive-observation"
+    evidence:
+      - "Payment example id: T-9041"
+      - "Merchant example id: M-1234"
+      - "IBAN example: GB29NWBK60161331926819 (valid format, fake)"
+      - "Webhook secret example: whsec_fakeplaceholder123"
+    notes: "Scanner should recognize these as test data patterns."
+
+# =============================================================================
+# CATEGORY 3: FALSE-POSITIVE GUARDRAILS (Must NOT Flag)
+# These are patterns that scanners MUST NOT report as real findings.
+# They are documented here to prevent false positives in the test framework.
+# =============================================================================
+false_positive_guardrails:
   - pattern: "real-aws-credentials"
     description: "The fake AWS ARN (arn:aws:example:...) and fake AWS keys (FAKEAWSACCESSKEYPLACEHOLDER, example-secret-access-key-placeholder) in /.env must NOT be flagged as real AWS secrets."
     reason: "Uses 'example' partition and documented example account ID 123456789012"
+    related_detection_id: "fintech-main-env-exposure"
 
   - pattern: "real-stripe-keys"
     description: "The fake Stripe keys (pk_test_fakeplaceholder123, sk_test_fakeplaceholder123) in /.env must NOT be flagged as real Stripe keys."
     reason: "Prefix 'pk_test_' and 'sk_test_' with 'fakeplaceholder' suffix — recognizably fake"
+    related_detection_id: "fintech-main-env-exposure"
 
   - pattern: "real-sentry-dsn"
     description: "The fake Sentry DSN (https://fake@sentry.example.com/123) must NOT be flagged."
     reason: "Uses 'fake' username and 'example.com' domain"
+    related_detection_id: "fintech-main-env-exposure"
 
   - pattern: "postgresql-service"
     description: "Port 5432 reachability must NOT be reported as 'PostgreSQL service detected' or 'database exposed'."
     reason: "Only a dummy TCP listener (socat) accepts and closes connections. No PostgreSQL protocol, no banner, no data."
+    related_detection_id: "fintech-port-5432-reachable"
 
   - pattern: "subdomain-takeover-exploitable"
     description: "The dangling CNAMEs for staging and dev-old must NOT be reported as exploitable/claimable takeover vulnerabilities."
     reason: "Targets are synthetically constructed hostnames that do not exist and cannot be registered by anyone."
+    related_detection_id: "fintech-staging-dangling-cname"
 
   - pattern: "confirmed-cve-nginx-1.14.0"
     description: "The outdated Server header (nginx/1.14.0) must NOT be reported as a confirmed CVE exploitation."
     reason: "This is a version disclosure indicator only. No exploit is present or implied. Classification should be 'detected/inferred outdated component'."
+    related_detection_id: "fintech-dev-outdated-server-header"
 
   - pattern: "expired-tls-certificate"
     description: "The TLS certificate for paleon-lab-fintech.co.uk is NOT expired (unlike Site 4). Do not report as expired."
     reason: "This site uses a valid self-signed certificate. Only Site 4 (Northbridge) uses an expired certificate."
+    related_detection_id: "fintech-tls-cert-valid"
 
   - pattern: "real-customer-data"
     description: "No real customer data, PII, or financial records exist anywhere in this test environment."
     reason: "All data is synthetic/fictional by design."
+    related_detection_id: "fintech-api-fake-examples"
 
-# -----------------------------------------------------------------------------
+# =============================================================================
 # Summary for automated validation
-# -----------------------------------------------------------------------------
+# =============================================================================
 validation_summary:
-  total_expected_findings: 17
-  must_be_reported: 17
-  must_not_flag_patterns: 8
-  hosts_tested: 6
-  infrastructure_findings: 5
+  scanner_detections: 13
+  positive_observations: 8
+  false_positive_guardrails: 8
+  total_findings: 21
+  must_be_reported: 21
+  hosts_tested: 7
+  infrastructure_findings: 1
   dns_findings: 3
 
-# -----------------------------------------------------------------------------
+# =============================================================================
+# Programmatic verification
+# Run with: python3 -c "
+# import yaml
+# d=yaml.safe_load(open('expected.yaml'))
+# print('scanner_detections:', len(d['scanner_detections']))
+# print('positive_observations:', len(d['positive_observations']))
+# print('false_positive_guardrails:', len(d['false_positive_guardrails']))
+# print('total:', len(d['scanner_detections']) + len(d['positive_observations']) + len(d['false_positive_guardrails']))
+# "
+# =============================================================================
+verification:
+  count_scanner_detections: 13
+  count_positive_observations: 8
+  count_false_positive_guardrails: 8
+  count_hosts_in_site_hosts: 7
+
+# =============================================================================
 # Version
-# -----------------------------------------------------------------------------
+# =============================================================================
 version: "1.0"
 updated: "2026-08-30"
 generated_by: "Paleon Test Lab — Site 1 Build"

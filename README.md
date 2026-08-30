@@ -44,23 +44,37 @@ This is a fictional UK fintech/payments SME website ("Tessera Financial") with *
 
 See [`expected.yaml`](expected.yaml) for the complete, machine-readable list of what the Paleon scanner **should** and **must not** detect.
 
-Key expectations:
+The findings are organized into three categories:
 
-### Must Be Reported (17 findings)
+### Category 1: Scanner Detections (13 findings — Intentional Issues)
+These are actual security issues intentionally planted for the scanner to detect:
 - `.env` file exposure at main site (fake placeholders only)
-- Fake AWS ARN in `.env` — **must NOT flag as real secret**
-- HSTS present on main site & API host
-- HSTS **missing** on app host and dev host
+- HSTS **missing** on app host
+- No authentication on app host
 - `/swagger.json` exposed on API host (fake OpenAPI 3.1)
 - Outdated `Server: nginx/1.14.0` header on dev host
-- Legacy TLS (1.0/1.1) on dev host
+- Legacy TLS (1.0/1.1) enabled on dev host
+- HSTS **missing** on dev host
 - Two safe subdomain-takeover indicators (dangling CNAMEs)
 - Port 5432 reachable (dummy listener, no PostgreSQL)
-- Port 22 restricted to admin IP
-- Risky ports NOT exposed (3306, 3389, 445, 23, 25, 6379, 27017)
-- DMARC `p=none`, SPF weak, DNSSEC disabled
+- DMARC `p=none` (monitoring only)
+- SPF weak (`~all` softfail)
+- DNSSEC disabled
+- (Fake AWS ARN in `.env` — must NOT flag as real secret)
 
-### Must NOT Flag (8 patterns)
+### Category 2: Positive Observations (8 findings — Security Controls Working)
+These represent GOOD security posture that the scanner should verify:
+- HSTS present on main site
+- Content-Security-Policy present on main site
+- Clean URL routing (no .html extensions)
+- HSTS present on API host
+- SSH (port 22) restricted to admin IP
+- Risky ports NOT exposed (3306, 3389, 445, 23, 25, 6379, 27017)
+- TLS certificate valid (not expired)
+- OpenAPI spec contains only synthetic/fake examples
+
+### Category 3: False-Positive Guardrails (8 patterns — Must NOT Flag)
+These patterns must NOT be reported as real findings:
 - Real AWS credentials (fake ARN uses `example` partition)
 - Real Stripe keys (fake `pk_test_fakeplaceholder...`)
 - Real Sentry DSN (fake `@sentry.example.com`)
@@ -69,6 +83,8 @@ Key expectations:
 - Confirmed CVE for nginx 1.14.0 (indicator only)
 - Expired TLS cert (this site's cert is valid)
 - Real customer data (all synthetic)
+
+**Total: 21 findings that must be reported (13 detections + 8 positive observations) + 8 false-positive guardrails**
 
 ---
 
@@ -132,7 +148,7 @@ fintech/
 
 **Target:** AWS EC2 `t4g.nano` (ARM64), Ubuntu 26.04 LTS, `eu-west-2` (London)  
 **IaC:** Terraform (in `terraform/`)  
-**Web server:** Nginx with `libnginx-mod-http-headers-more`  
+**Web server:** Nginx with `libnginx-mod-http-headers-more-filter`  
 **Port 5432:** Separate `socat` dummy listener (systemd service)
 
 ### Quick Start

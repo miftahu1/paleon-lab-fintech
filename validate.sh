@@ -151,6 +151,7 @@ else
   red "dummy listener does not use socat"
 fi
 
+
 # --- 11. Subdomain takeover safe indicators --------------------------------
 info "Checking subdomain-takeover safe indicators..."
 if grep -q "s3-website-eu-west-1.amazonaws.com" "$SCRIPT_DIR/subdomain-takeover-indicator.txt" && \
@@ -198,6 +199,40 @@ for pat in "*.key" "terraform.tfstate" ".env.real"; do
     red ".gitignore missing: $pat"
   fi
 done
+
+# --- 16. expected.yaml counts verification ------------------------------------
+info "Checking expected.yaml counts match actual entries..."
+if command -v python3 >/dev/null 2>&1; then
+  python3 <<'PYEOF'
+import yaml, sys
+with open('expected.yaml') as f:
+    d = yaml.safe_load(f)
+sd = len(d.get('scanner_detections', []))
+po = len(d.get('positive_observations', []))
+fg = len(d.get('false_positive_guardrails', []))
+total = sd + po + fg
+print(f"  scanner_detections: {sd}")
+print(f"  positive_observations: {po}")
+print(f"  false_positive_guardrails: {fg}")
+print(f"  total: {total}")
+# Verify against validation_summary
+vs = d.get('validation_summary', {})
+if vs.get('scanner_detections') == sd and vs.get('positive_observations') == po and vs.get('false_positive_guardrails') == fg and vs.get('total_findings') == total:
+    print("  Validation summary matches actual counts!")
+    sys.exit(0)
+else:
+    print("  MISMATCH: validation_summary does not match actual counts!")
+    print(f"  validation_summary: {vs}")
+    sys.exit(1)
+PYEOF
+  if [[ $? -eq 0 ]]; then
+    green "expected.yaml counts verified programmatically"
+  else
+    red "expected.yaml count mismatch"
+  fi
+else
+  info "python3 not available; skipping expected.yaml count verification"
+fi
 
 # --- Summary -----------------------------------------------------------------
 echo ""
