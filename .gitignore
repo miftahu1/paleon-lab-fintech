@@ -36,17 +36,20 @@ venv/
 # SECRETS & KEYS — NEVER COMMIT
 # =============================================================================
 # Real environment files must remain protected.
-# The repository intentionally commits one synthetic .env file with fake values only.
-.env
+# Site 1 intentionally tracks .env because it contains synthetic test values only.
+
+# Real/local environment files
 .env.real
 .env.local
 .env.*.local
-.env.*
-!.env
 
-# Ignore generated environment files, but keep the repository-safe test file tracked.
+# Ignore other environment files
+.env.*
 *.env
-!*.env.example
+
+# Exception: Site 1's synthetic scanner-test artifact
+!.env
+!.env.example
 
 # TLS private keys & certificates
 *.key
