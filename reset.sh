@@ -23,8 +23,12 @@ else
   exit 1
 fi
 
-SSH_KEY="${SSH_KEY:-$HOME/.ssh/id_rsa}"
-SSH_OPTS=(-i "$SSH_KEY" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null)
+SSH_KEY="${SSH_KEY:-}"
+if [[ -n "$SSH_KEY" ]]; then
+  SSH_OPTS=(-i "$SSH_KEY")
+else
+  SSH_OPTS=()
+fi
 
 echo "==> Resetting Site 1 (Fintech) on: ${DEPLOY_TARGET}"
 

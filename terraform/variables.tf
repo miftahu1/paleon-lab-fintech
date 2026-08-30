@@ -22,9 +22,14 @@ variable "admin_ip" {
 }
 
 variable "public_key_path" {
-  description = "Path to SSH public key file"
+  description = "Path to the SSH public key file (*.pub) to upload to AWS. Example: ~/.ssh/paleon-fintech.pub or C:/Users/Alice/.ssh/paleon-fintech.pub"
   type        = string
-  default     = "~/.ssh/id_rsa.pub"
+  default     = ""
+
+  validation {
+    condition     = trimspace(var.public_key_path) != "" && can(regex("\\.pub$", trimspace(var.public_key_path)))
+    error_message = "public_key_path must point to an SSH public key (*.pub). Do not pass a private key (*.pem) to Terraform."
+  }
 }
 
 variable "instance_type" {

@@ -190,7 +190,15 @@ for pat in "real-aws-credentials" "real-stripe-keys" "postgresql-service" "subdo
   fi
 done
 
-# --- 15. .gitignore protects secrets ---------------------------------------
+# --- 15. no stale module package or loader mismatches ----------------------
+info "Checking Headers-More package and module config usage..."
+if grep -q "libnginx-mod-http-headers-more-filter" "$SCRIPT_DIR/nginx.conf" && ! grep -Eq "^[[:space:]]*load_module[[:space:]]" "$SCRIPT_DIR/nginx.conf"; then
+  green "Headers-More package documented and site-level load_module removed"
+else
+  red "Headers-More package documentation or module loader is inconsistent"
+fi
+
+# --- 16. .gitignore protects secrets ---------------------------------------
 info "Checking .gitignore protects secrets..."
 for pat in "*.key" "terraform.tfstate" ".env.real"; do
   if grep -q "$pat" "$SCRIPT_DIR/.gitignore"; then
@@ -217,7 +225,7 @@ print(f"  false_positive_guardrails: {fg}")
 print(f"  total: {total}")
 # Verify against validation_summary
 vs = d.get('validation_summary', {})
-if vs.get('scanner_detections') == sd and vs.get('positive_observations') == po and vs.get('false_positive_guardrails') == fg and vs.get('total_findings') == total:
+if vs.get('scanner_detections') == sd and vs.get('positive_observations') == po and vs.get('false_positive_guardrails') == fg and vs.get('total_test_cases') == total:
     print("  Validation summary matches actual counts!")
     sys.exit(0)
 else:

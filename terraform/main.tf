@@ -50,8 +50,7 @@ data "aws_ami" "ubuntu" {
   filter {
     name = "name"
     values = [
-      "ubuntu/images/hvm-ssd-gp3/ubuntu-noble-26.04-arm64-server-*",
-      "ubuntu/images/hvm-ssd-gp3/*ubuntu-*26.04-arm64-server-*",
+      "ubuntu/images/hvm-ssd-gp3/ubuntu-*-26.04-arm64-server-*",
     ]
   }
 
@@ -63,6 +62,11 @@ data "aws_ami" "ubuntu" {
   filter {
     name   = "architecture"
     values = ["arm64"]
+  }
+
+  filter {
+    name   = "root-device-type"
+    values = ["ebs"]
   }
 }
 
@@ -140,10 +144,10 @@ resource "aws_security_group" "web" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  # INTENTIONAL: Dummy PostgreSQL port reachable from Internet
-  # (socat dummy listener, no real PostgreSQL)
+  # INTENTIONAL: dummy TCP listener reachable from Internet
+  # (socat listener, no real PostgreSQL service)
   ingress {
-    description = "Dummy PostgreSQL port (intentional test condition)"
+    description = "Dummy TCP listener on 5432 (intentional test condition)"
     from_port   = 5432
     to_port     = 5432
     protocol    = "tcp"
@@ -209,21 +213,18 @@ resource "aws_instance" "web" {
   user_data = <<-EOF
     #!/bin/bash
     set -e
-    apt update
-    apt upgrade -y
-    apt install -y nginx libnginx-mod-http-headers-more-filter socat openssl git ufw
+    apt-get update
+    DEBIAN_FRONTEND=noninteractive apt-get install -y \
+      nginx \
+      libnginx-mod-http-headers-more-filter \
+      socat \
+      openssl \
+      git
 
-    # Firewall: allow 80, 443, 5432, 22 (SSH from anywhere at OS level; SG restricts)
-    ufw allow 80/tcp
-    ufw allow 443/tcp
-    ufw allow 5432/tcp
-    ufw allow 22/tcp
-    ufw --force enable
-
-    # Create web root directories
+    # AWS Security Group is the primary network boundary for this lab.
+    # Do not create redundant host-level UFW rules that contradict the intended exposure.
     mkdir -p /var/www/paleon-fintech/{main,app,api,dev}
 
-    # Enable nginx
     systemctl enable nginx
     systemctl start nginx
 

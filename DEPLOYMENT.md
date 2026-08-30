@@ -88,7 +88,7 @@ paleon-lab-fintech.co.uk      IN TXT  "v=spf1 include:_spf.google.com ~all"
 _dmarc.paleon-lab-fintech.co.uk  IN TXT  "v=DMARC1; p=none; rua=mailto:dmarc@paleon-lab-fintech.co.uk"
 ```
 
-**Important:** Do NOT enable DNSSEC (intentional omission for testing).
+**Important:** Do NOT enable DNSSEC (intentional omission for testing). The safe takeover indicator is a lab-only DNS indicator and must never be described as a confirmed takeover.
 
 ### Wait for Propagation
 
@@ -120,17 +120,16 @@ sudo apt update && sudo apt upgrade -y
 ### 3.3 Install Packages
 
 ```bash
-sudo apt install -y nginx
-sudo apt install -y libnginx-mod-http-headers-more-filter
-sudo apt install -y socat
-sudo apt install -y openssl
-sudo apt install -y git
+sudo apt install -y nginx libnginx-mod-http-headers-more-filter socat openssl git
 ```
+
+On Ubuntu, the package installs the module configuration under `/etc/nginx/modules-enabled/`. The normal nginx `http` context then exposes `more_set_headers` without a site-level `load_module` directive.
 
 Verify headers-more module:
 
 ```bash
 dpkg -l | grep libnginx-mod-http-headers-more-filter
+ls /etc/nginx/modules-enabled | grep headers-more
 ```
 
 ---
@@ -202,7 +201,7 @@ sudo cp /tmp/fintech-site/nginx.conf /etc/nginx/sites-available/paleon-fintech
 sudo ln -s /etc/nginx/sites-available/paleon-fintech /etc/nginx/sites-enabled/
 sudo rm /etc/nginx/sites-enabled/default
 ```
-
+Do not add a `load_module` directive inside the site config. On Ubuntu, the package installation creates the loader automatically in `/etc/nginx/modules-enabled/`.
 ### 6.2 Test
 
 ```bash

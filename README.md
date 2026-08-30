@@ -84,7 +84,7 @@ These patterns must NOT be reported as real findings:
 - Expired TLS cert (this site's cert is valid)
 - Real customer data (all synthetic)
 
-**Total: 21 findings that must be reported (13 detections + 8 positive observations) + 8 false-positive guardrails**
+**Total: 29 validation test cases (13 scanner detections + 8 positive observations + 8 false-positive guardrails)**
 
 ---
 
@@ -148,8 +148,8 @@ fintech/
 
 **Target:** AWS EC2 `t4g.nano` (ARM64), Ubuntu 26.04 LTS, `eu-west-2` (London)  
 **IaC:** Terraform (in `terraform/`)  
-**Web server:** Nginx with `libnginx-mod-http-headers-more-filter`  
-**Port 5432:** Separate `socat` dummy listener (systemd service)
+**Web server:** Nginx with the Ubuntu `libnginx-mod-http-headers-more-filter` package; the packaged config in `/etc/nginx/modules-enabled/` loads the module automatically.  
+**Port 5432:** Separate `socat` dummy TCP listener (systemd service); no PostgreSQL service is implemented.
 
 ### Quick Start
 

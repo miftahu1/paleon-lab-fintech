@@ -382,8 +382,7 @@ validation_summary:
   scanner_detections: 13
   positive_observations: 8
   false_positive_guardrails: 8
-  total_findings: 21
-  must_be_reported: 21
+  total_test_cases: 29
   hosts_tested: 7
   infrastructure_findings: 1
   dns_findings: 3
@@ -404,6 +403,7 @@ verification:
   count_positive_observations: 8
   count_false_positive_guardrails: 8
   count_hosts_in_site_hosts: 7
+  count_total_test_cases: 29
 
 # =============================================================================
 # Version

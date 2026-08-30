@@ -18,8 +18,8 @@ output "instance_public_dns" {
 }
 
 output "ssh_command" {
-  description = "Command to SSH into the instance"
-  value       = "ssh -i ${var.public_key_path} ubuntu@${aws_eip.web.public_ip}"
+  description = "Command to SSH into the instance using the matching private key (.pem)"
+  value       = "ssh -i <path-to-your-private-key.pem> ubuntu@${aws_eip.web.public_ip}"
 }
 
 output "security_group_id" {
@@ -41,7 +41,7 @@ output "next_steps" {
        CNAME dev-old → paleon-lab-old-env.herokudns.com
        TXT SPF → v=spf1 include:_spf.google.com ~all
        TXT DMARC → v=DMARC1; p=none; rua=mailto:dmarc@${var.domain_name}
-    2. SSH: ssh -i ${var.public_key_path} ubuntu@${aws_eip.web.public_ip}
+    2. SSH using your .pem private key: ssh -i /path/to/your-private-key.pem ubuntu@${aws_eip.web.public_ip}
     3. Generate TLS cert (see DEPLOYMENT.md Step 4)
     4. Deploy files: ./deploy.sh ubuntu@${aws_eip.web.public_ip}
     5. Run Paleon scanner → compare with expected.yaml

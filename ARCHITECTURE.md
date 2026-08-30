@@ -43,7 +43,7 @@ These findings need actual HTTP(S) endpoints with custom headers/content:
 
 ### What Requires TCP Listener
 
-⚠️ **Port 5432 reachable** — Requires dummy TCP listener (socat), NOT PostgreSQL
+⚠️ **Port 5432 reachable** — Requires dummy TCP listener (socat), NOT PostgreSQL; intended as a safe non-intrusive scanner indicator only.
 
 ### What Requires TLS Certificate
 
@@ -68,7 +68,7 @@ These findings need actual HTTP(S) endpoints with custom headers/content:
 │         Security Group                                          │
 │  • TCP 80    → 0.0.0.0/0   (HTTP redirect)                     │
 │  • TCP 443   → 0.0.0.0/0   (HTTPS)                              │
-│  • TCP 5432  → 0.0.0.0/0   (Dummy PostgreSQL port - INTENTIONAL)│
+│  • TCP 5432  → 0.0.0.0/0   (Dummy TCP listener port - INTENTIONAL; no PostgreSQL)│
 │  • TCP 22    → <admin IP>/32 (SSH management)                  │
 └─────────────────────────┬───────────────────────────────────────┘
                           │
@@ -243,7 +243,7 @@ nginx 1.14.0 reached **End of Life on 2019-10-01**.
 - Controllable: exact version string set in config
 - No need to install old nginx binary
 - Works with any nginx version
-- Requires `libnginx-mod-http-headers-more-filter` package (Ubuntu 24.04+)
+- Requires Ubuntu `libnginx-mod-http-headers-more-filter` package; the module is auto-loaded by the packaged config under `/etc/nginx/modules-enabled/` on Ubuntu 26.04 LTS.
 
 ### Legacy TLS on Dev Host
 

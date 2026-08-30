@@ -33,7 +33,7 @@ Rationale: Keep secrets (TLS private key, SSH private key) out of Terraform stat
 Inbound:
   80/tcp   0.0.0.0/0     HTTP (redirect)
   443/tcp  0.0.0.0/0     HTTPS
-  5432/tcp 0.0.0.0/0     Dummy PostgreSQL (INTENTIONAL)
+  5432/tcp 0.0.0.0/0     Dummy TCP listener (INTENTIONAL; no PostgreSQL)
   22/tcp   <admin_ip>    SSH (restricted)
 Outbound:
   all      0.0.0.0/0
@@ -47,10 +47,13 @@ Forbidden ports (NOT exposed): 3306, 3389, 445, 23, 25, 6379, 27017
 
 ```hcl
 admin_ip       = "203.0.113.45/32"   # YOUR IP
-public_key_path = "~/.ssh/id_rsa.pub"
+public_key_path = "/path/to/your-public-key.pub"  # *.pub, not a private *.pem
 domain_name    = "paleon-lab-fintech.co.uk"
 use_route53    = false               # true if using Route53 hosted zone
 ```
+
+Use the matching private key for SSH access, for example:
+`ssh -i /path/to/your-private-key.pem ubuntu@<public-ip>`
 
 ### 2. Initialize & Plan
 
